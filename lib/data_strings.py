@@ -5,10 +5,9 @@ SCRIPT_HEADER = """
 *               Books Search Application                         *
 *                                                                *
 ******************************************************************
-
 """
 TEMP_CSV = 'temp\\temp.csv'
-sort_str = """         1 - price
+sort_str = """     1 - price
      2 - avg ratings
      3 - rating count
      4 - published date
