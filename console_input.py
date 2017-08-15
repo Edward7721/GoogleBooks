@@ -28,34 +28,26 @@ Please include tests to cover your work.
 from lib.getBooksJson import Api
 from lib import coverter
 from lib.sort_books import SortBooks
-
-
-SCRIPT_HEADER = """
-******************************************************************
-*                                                                *
-*               Books Search Application                         *
-*                                                                *
-******************************************************************
-
-"""
-TEMP_CSV = 'temp\\temp.csv'
+from lib import data_strings
+from lib import verify_file_exists
 
 def main():
-    print SCRIPT_HEADER
-    sort_str = """         1 - price
-         2 - avg ratings
-         3 - rating count
-         4 - published date
-         5 - page count
-         q - quit\n
-    """
-    SORT_KEY = {'1':'price', '2': 'avg rating', '3': 'rating count', '4':'published date', '5': 'page count'}
-    csv_file = TEMP_CSV
+    Str = data_strings
+    print Str.SCRIPT_HEADER
+    sort_str = Str.sort_str
+    SORT_KEY = Str.SORT_KEY
     value = ''
     booksAPI = Api()
+    # Get input.
+    print 'Note: all files will be saved or loaded into/from <Library> folder\n'
     while value != "q":
-        # Get input.
-        value = raw_input('SELECT: Search or Load books library ("S"/"L"), "q" - quit >>').lower()
+        value = raw_input('Please, provide a csv file name to save your search or load >> ')
+        csv_file = 'Library\\' + value
+        value = raw_input('\nSELECT: Search or Load books library ("S"/"L"), "q" - quit >>').lower()
+        if value == "q":
+            break
+        if value not in ['s', 'l']:
+            continue
         if value == "s":
             value = raw_input('SEARCH: Search string >>').lower()
             print("\nBy default you will get 10 or less results")
@@ -66,25 +58,24 @@ def main():
                 maxResults = int(value)
                 if  maxResults>40:
                     maxResults = 40
-            result = booksAPI.get(q=q, maxResults=maxResults)
-            if result:
-                value = raw_input('To save csv File provide filepath >>').lower()
-                csv_file = value
-                coverter.conv(value, json_value = result)
+            result, status = booksAPI.get(q=q, maxResults=maxResults)
+            # Save the search result
+            if  status== 200:
+                coverter.conv(csv_file, json_value = result)
         elif value == "l":
-            csv_file = raw_input('To load csv file provide filepath >>').lower()
-        elif value == "q":
-            break
-        else:
-            continue
-        value = raw_input('Sort your books by:\n' + sort_str + '>>').lower()
+            if not verify_file_exists.verify_file_exists('\\' + csv_file):
+                continue
+
+        value = raw_input('\nSort your books by:\n' + sort_str + '>>').lower()
         if value.isdigit() and (int(value)>0 and int(value)<6):
             sort_id = value
             books_list = SortBooks(csv_file)
             books_list.sort_books(SORT_KEY[sort_id])
-
+        break
     # Exit message.
-    print("You quit.")
+    print("Exit")
 
 if __name__ == '__main__':
     main()
+      
+      
