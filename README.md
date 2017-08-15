@@ -24,7 +24,7 @@ Response Status Code: 200
 Just completed writing csv file with 59 columns
 
 Sort your books by:
-         1 - price
+     1 - price
      2 - avg ratings
      3 - rating count
      4 - published date
